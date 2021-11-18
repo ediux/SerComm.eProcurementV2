@@ -2,7 +2,7 @@
 {
     public static class eProcurementV2Consts
     {
-        public const string DbTablePrefix = "App";
+        public const string DbTablePrefix = "ePrV2_";
 
         public const string DbSchema = null;
     }
