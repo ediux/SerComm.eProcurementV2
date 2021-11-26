@@ -2,6 +2,8 @@
 
 using SerComm.eProcurementV2.Data;
 
+using System;
+
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -57,7 +59,14 @@ namespace SerComm.eProcurementV2.EntityFrameworkCore
         #endregion
 
         #region Entitites from eProcurement V2.0
+        /// <summary>
+        /// 採購單主檔
+        /// </summary>
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        /// <summary>
+        /// 採購明細檔
+        /// </summary>
+        public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
         #endregion
         public eProcurementV2DbContext(DbContextOptions<eProcurementV2DbContext> options)
             : base(options)
@@ -120,11 +129,13 @@ namespace SerComm.eProcurementV2.EntityFrameworkCore
                     .HasMaxLength(30);
 
                 b.Property(p => p.version_no)
-                    .HasColumnType("nchar")
+                    .IsFixedLength()
+                    .IsUnicode()
                     .HasMaxLength(20);
 
                 b.Property(p => p.vender_no)
-                    .HasColumnType("nchar")
+                    .IsFixedLength()
+                    .IsUnicode()
                     .HasMaxLength(30);
 
                 b.Property(p => p.vender_name)
@@ -132,7 +143,8 @@ namespace SerComm.eProcurementV2.EntityFrameworkCore
                     .HasMaxLength(180);
 
                 b.Property(p => p.ch_sort_no)
-                    .HasColumnType("nchar")
+                    .IsFixedLength()
+                    .IsUnicode()
                     .HasMaxLength(30);
 
                 b.Property(p => p.ch_sort_name)
@@ -185,7 +197,258 @@ namespace SerComm.eProcurementV2.EntityFrameworkCore
                 .IsUnicode(false)
                 .HasMaxLength(20);
 
+                b.Property(p => p.erp_code)
+                .IsUnicode(false)
+                .HasMaxLength(1);
+
+                b.Property(p => p.code_mark)
+                .IsUnicode(false)
+                .HasMaxLength(100);
+
+                b.Property(p => p.ch_caqty)
+                .HasPrecision(24, 4);
+
+                b.Property(p => p.arn_app_no)
+                .IsUnicode(false)
+                .HasMaxLength(50);
+
+                b.Property(p => p.asn_cancel)
+                .IsUnicode(false)
+                .HasMaxLength(2);
+
+                b.Property(p => p.ch_kqty)
+                .HasPrecision(18, 0);
+
+                b.Property(p => p.el_min)
+                .HasPrecision(18, 0);
+
+                b.Property(p => p.el_eoq)
+                .HasPrecision(18, 0);
+
+                b.Property(p => p.asn_acqty)
+                .HasPrecision(18, 0);
+
+                b.Property(p => p.split_uid)
+                .IsUnicode(false)
+                .HasMaxLength(50);
+
+                b.Property(p => p.el_abc)
+                .IsUnicode(false)
+                .HasMaxLength(2);
+
                 b.ConfigureByConvention(); //auto configure for the base class props               
+            });
+
+            builder.Entity<PurchaseOrderDetail>(b => { 
+                b.ToTable(eProcurementV2Consts.DbTablePrefix + nameof(PurchaseOrderDetails), eProcurementV2Consts.DbSchema);
+
+                b.Property(p => p.Id)
+                .HasColumnName("uid")
+                .UseIdentityColumn();
+
+                b.Property(p => p.mt_list)
+                .IsUnicode(false)
+                .HasMaxLength(30)
+                .IsRequired();
+
+                b.Property(p => p.el_no)
+                .IsUnicode()
+                .HasMaxLength(100)
+                .IsRequired();
+
+                b.Property(p => p.vender_no)
+                .IsUnicode()
+                .IsFixedLength()
+                .HasMaxLength(30);
+
+                b.Property(p => p.vender_name)
+                .IsUnicode()
+                .HasMaxLength(80)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.ch_sort_no)
+                .IsFixedLength()
+                .IsUnicode()
+                .HasMaxLength(30);
+
+                b.Property(p => p.ch_sort_name)
+                .IsUnicode()
+                .HasMaxLength(80);
+
+                b.Property(p => p.remark)
+                .IsUnicode()
+                .HasMaxLength(200);
+
+                b.Property(p => p.factory_no)
+                .IsUnicode(false)
+                .HasMaxLength(20);
+
+                b.Property(p => p.epr_status)
+                .IsUnicode(false)
+                .HasMaxLength(4)
+                .IsRequired()
+                .HasDefaultValue("99");
+
+                b.Property(p => p.arn_type)
+                .IsUnicode(false)
+                .HasMaxLength(4)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.asn_no)
+                .IsUnicode(false)
+                .HasMaxLength(100)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.asn_qty)
+                .HasPrecision(24, 4)
+                .HasDefaultValue((decimal)0.0000);
+
+                b.Property(p => p.asn_code)
+                .IsUnicode()
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.code_user)
+                .IsUnicode(false)
+                .HasMaxLength(20)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.erp_code)
+                .IsUnicode()
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.code_mark)
+                .IsUnicode(false)
+                .HasMaxLength(100)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.po_no)
+                .IsUnicode(false)
+                .HasMaxLength(20)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.arn_app_no)
+                .IsUnicode(false)
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.asn_cancel)
+                .IsUnicode(false)
+                .HasMaxLength(2)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.corp_no)
+                .IsUnicode(false)
+                .HasMaxLength(10)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.ch_acqty)
+                .IsUnicode(false)
+                .HasMaxLength(50)
+                .HasDefaultValue("0");
+
+                b.Property(p => p.ch_caqty)
+                .HasPrecision(18, 0)
+                .HasDefaultValue((decimal)0);
+
+                b.Property(p => p.asn_sure)
+                .IsUnicode(false)
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.el_min)
+                .HasPrecision(18, 0)
+                .HasDefaultValue((decimal)0);
+
+                b.Property(p => p.el_eoq)
+                .HasPrecision(18, 0)
+                .HasDefaultValue((decimal)0);
+
+                b.Property(p => p.asn_acqty)
+                .HasPrecision(18, 0)
+                .HasDefaultValue((decimal)0);
+
+                b.Property(p => p.el_abc)
+                .IsUnicode(false)
+                .HasMaxLength(2)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p=>p.oper_time)
+                .HasDefaultValue(DateTime.Now);
+
+                b.Property(p => p.version_no)
+                .IsUnicode(false)
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.org_asn_qty)
+                .HasPrecision(24, 4)
+                .HasDefaultValue((decimal)0);
+
+                b.Property(p => p.split_uid)
+                .IsUnicode(false)
+                .HasMaxLength(50)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p=>p.invoice_no)
+                .IsUnicode()
+                .HasMaxLength(150)
+                .HasDefaultValue(string.Empty);
+
+                b.Property(p => p.plant)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p=>p.commit_qty)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p => p.shipping_qty)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p => p.etd)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p=>p.ep_number)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p=>p.delivery_date)
+                .IsUnicode()
+                .HasMaxLength(50);
+                
+                b.Property(p=>p.shipper)
+                .IsUnicode()
+                .HasMaxLength(200);
+
+                b.Property(p => p.ship_to)
+                .IsUnicode()
+                .HasMaxLength(200);
+
+                b.Property(p => p.bill_to)
+                .IsUnicode()
+                .HasMaxLength(200);
+
+                b.Property(p => p.port_loading)
+                .IsUnicode()
+                .HasMaxLength(200);
+
+                b.Property(p => p.port_delivery)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p=>p.bill_no)
+                .IsUnicode()
+                .HasMaxLength(50);
+
+                b.Property(p => p.ship_term)
+                .IsUnicode()
+                .HasMaxLength(50);
+                
+                b.ConfigureByConvention();
             });
         }
     }
